@@ -1,0 +1,5 @@
+pyudev
+python3-tk
+scikit-learn
+joblib
+pexpect

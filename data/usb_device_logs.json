@@ -1,0 +1,9 @@
+[
+    {
+        "vendor_id": "0781",
+        "product_id": "5567",
+        "serial": "4C530001300524104314",
+        "device": "/dev/bus/usb/003/022",
+        "decision": "block"
+    }
+]
