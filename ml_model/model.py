@@ -23,13 +23,27 @@ def train_model():
     serials = []
     decisions = []
 
+    vendor_allow_count = {}  # Track how many times a vendor has been allowed
+
     for log in logs:
         if 'decision' not in log:
             continue
-        vendor_ids.append(log['vendor_id'])
+        vendor_id = log['vendor_id']
+        vendor_ids.append(vendor_id)
         product_ids.append(log['product_id'])
         serials.append(log['serial'])
         decisions.append(1 if log['decision'] == 'allow' else 0)
+
+        # Increment the count for each vendor being allowed
+        if log['decision'] == 'allow':
+            if vendor_id not in vendor_allow_count:
+                vendor_allow_count[vendor_id] = 0
+            vendor_allow_count[vendor_id] += 1
+
+    # Check the balance of "allow" vs "block"
+    allow_count = decisions.count(1)
+    block_count = decisions.count(0)
+    print(f"Training data: {allow_count} allow, {block_count} block")
 
     # Encode features and train model as before
     le_vendor = LabelEncoder()
@@ -43,38 +57,66 @@ def train_model():
     X = np.column_stack((vendor_ids_encoded, product_ids_encoded, serials_encoded))
     y = np.array(decisions)
 
-    # Train the model on the entire dataset if there are not enough samples for a split
-    if len(X) < 2:
-        print("Not enough data to split, using all data for training.")
-        model = DecisionTreeClassifier()
-        model.fit(X, y)
-    else:
-        # Train/test split (only if there is enough data)
-        from sklearn.model_selection import train_test_split
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    model = DecisionTreeClassifier()
+    model.fit(X, y)
 
-        # Train the model
-        model = DecisionTreeClassifier()
-        model.fit(X_train, y_train)
-
-    # Save the trained model
+    # Save the trained model and encoders
     joblib.dump(model, MODEL_FILE)
-    print("Model trained and saved.")
+    joblib.dump(le_vendor, 'ml_model/le_vendor.pkl')
+    joblib.dump(le_product, 'ml_model/le_product.pkl')
+    joblib.dump(le_serial, 'ml_model/le_serial.pkl')
+
+    print("Model and encoders trained and saved.")
 
 
 def predict(device_info):
     """ Predict whether a device should be allowed or blocked based on past data. """
     try:
         model = joblib.load(MODEL_FILE)
+        le_vendor = joblib.load('ml_model/le_vendor.pkl')
+        le_product = joblib.load('ml_model/le_product.pkl')
+        le_serial = joblib.load('ml_model/le_serial.pkl')
     except FileNotFoundError:
+        print("Model or encoders not found.")
         return None
 
-    # Convert device info to features
-    features = np.array([[
-        le_vendor.transform([device_info['vendor_id']])[0],
-        le_product.transform([device_info['product_id']])[0],
-        le_serial.transform([device_info['serial']])[0]
-    ]])
+    # Load vendor allow counts
+    try:
+        with open('data/vendor_allow_counts.json', 'r') as f:
+            vendor_allow_count = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        vendor_allow_count = {}
 
+    vendor_id = device_info['vendor_id']
+
+    # Automatically allow only if the vendor has been allowed 5 or more times
+    if vendor_allow_count.get(vendor_id, 0) >= 5:
+        print(f"Automatically allowing USB device from vendor {vendor_id}")
+        return 'allow'
+
+    # Handle unseen values for LabelEncoders
+    try:
+        vendor_encoded = le_vendor.transform([device_info['vendor_id']])[0]
+    except ValueError:
+        print(f"Vendor ID {device_info['vendor_id']} not recognized by encoder.")
+        return None  # Prompt user for decision
+
+    try:
+        product_encoded = le_product.transform([device_info['product_id']])[0]
+    except ValueError:
+        print(f"Product ID {device_info['product_id']} not recognized by encoder.")
+        return None  # Prompt user for decision
+
+    try:
+        serial_encoded = le_serial.transform([device_info['serial']])[0]
+    except ValueError:
+        print(f"Serial {device_info['serial']} not recognized by encoder.")
+        return None  # Prompt user for decision
+
+    # Convert device info to features for the model
+    features = np.array([[vendor_encoded, product_encoded, serial_encoded]])
+
+    # Model prediction (fallback if auto-allow threshold is not met)
     prediction = model.predict(features)
-    return 'allow' if prediction == 1 else 'block'
+    return 'allow' if prediction == 1 else None
+
