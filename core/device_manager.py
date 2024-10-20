@@ -71,7 +71,7 @@ class USBDeviceManager:
         try:
             # Pass the sudo password and run the echo command to append to the file
             subprocess.Popen(echo_command, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL) \
-                .communicate(input=f'{self.sudo_password}\n{blocking_command}\n'.encode())
+                .communicate(input=f'{self.sudo_password}\n\n{blocking_command}\n'.encode())
 
             # Reload udev rules and trigger them to apply changes
             update_commands = [
@@ -152,8 +152,11 @@ class USBDeviceManager:
                                     f.seek(0)
                                     json.dump(vendor_allow_count, f)
 
-                        else:
+                        elif user_choice == 'block':
                             self.block_usb_device(usb_device)
+
+                        else:
+                            continue
 
         except KeyboardInterrupt:
             print("\nStopping USB device monitoring.")

@@ -65,6 +65,25 @@ def log_usb_device(device_info, decision):
         json.dump(logs, file, indent=4)
 
 
-def disable_auto_mount():
-    """ Disable auto-mounting in GNOME desktop. """
-    subprocess.run(['gsettings', 'set', 'org.gnome.desktop.media-handling', 'automount', 'false'])
+def disable_auto_mount(sudo_password):
+    """ Disable auto-mounting """
+    disable_command = 'ACTION=="add", SUBSYSTEM=="block", ENV{UDISKS_IGNORE}="1"'
+    echo_command = ['sudo', '-S', 'tee', '-a', '/etc/udev/rules.d/99-disable-usb-automount.rules']
+    try:
+        # Pass the sudo password and run the echo command to append to the file
+        subprocess.Popen(echo_command, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL) \
+            .communicate(input=f'{sudo_password}\n{disable_command}\n'.encode())
+
+        # Reload udev rules and trigger them to apply changes
+        update_commands = [
+            ['sudo', '-S', 'udevadm', 'control', '--reload'],
+            ['sudo', '-S', 'udevadm', 'trigger']
+        ]
+        for command in update_commands:
+            subprocess.Popen(command, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL) \
+                .communicate(input=f'{sudo_password}\n'.encode())
+
+        print(f"Auto-mount disabled successfully")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to disable automount")

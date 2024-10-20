@@ -12,7 +12,7 @@ if __name__ == "__main__":
         print("No password provided. Exiting...")
         exit(1)
 
-    disable_auto_mount()
+    disable_auto_mount(sudo_password)
 
     # Train the model when the program starts
     train_model()
