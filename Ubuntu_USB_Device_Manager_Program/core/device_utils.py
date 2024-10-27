@@ -121,6 +121,7 @@ def unmount_device(root_process_launcher: RootProcessLauncher, device: USBDevice
             break
     if not device_details:
         logger.error(f"Failed to find the USB device: {device.device_node} mount point")
+        return
 
     # Define the mount point
     mount_point = f"/media/{whoami}/{device_details['serial']}"

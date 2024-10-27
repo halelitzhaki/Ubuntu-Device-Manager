@@ -26,7 +26,7 @@ class USBDeviceManager:
     def allow_usb_device(self, device: USBDevice) -> None:
         """ Logic to allow and automatically mount the USB device. """
         logger.info(f"Allowing and mounting USB Device: {device.vendor_id} - {device.product_id}")
-
+        time.sleep(2)
         # Get the block device (e.g., /dev/sdb1)
         block_device = get_lsblk_device(device.device_node)
 
