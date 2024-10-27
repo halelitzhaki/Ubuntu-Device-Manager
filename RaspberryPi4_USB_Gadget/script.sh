@@ -10,37 +10,39 @@ SERIAL="1234567890"                                               #  device seri
 IDPRODUCT="0x5567"                                                #  hex product ID, issued by USB Group
 IDVENDOR="0x0781"                                                 #  hex vendor ID, assigned by USB Group
 PRODUCT=" Cruzer Blade"                                           #  cleartext product description
-CONFIG_NAME="Configuration 1"                                     #  name of this configuration
 MAX_POWER_MA=120                                                  #  max power this configuration can consume in mA
-PROTOCOL=1                                                        #  1 for keyboard. see usb spec
-SUBCLASS=1                                                        #  it seems either 1 or 0 works, dunno why
-REPORT_LENGTH=8                                                   #  number of bytes per report
-DESCRIPTOR=/config/usb_gadget/keyboardgadget/kybd-descriptor.bin  #  binary blob of report descriptor, see HID class spec
 
-
-# gadget configuration
+# Gadget configuration
 rmmod g_ether
 modprobe libcomposite                                             #  load configfs
 modprobe dwc2
-mkdir /sys/kernel/config/usb_gadget/test_gadget                   #  make a new gadget skeleton
-cd /sys/kernel/config/usb_gadget/test_gadget                      #  cd to gadget dir
+
+# Create the USB gadget directory
+mkdir /sys/kernel/config/usb_gadget/test_gadget
+cd /sys/kernel/config/usb_gadget/test_gadget
+
+# Set vendor and product IDs
 echo $IDPRODUCT > idProduct
 echo $IDVENDOR > idVendor
+
+# Set up strings (English language, 0x409)
 mkdir strings/0x409
 echo $SERIAL > strings/0x409/serialnumber
 echo $MANUFACTURER > strings/0x409/manufacturer
-echo $PRODUCT > strings/0x409/product
-mkdir configs/c.1                                                 #  make the skeleton for a config for this gadget
+echo $PRODUCT > strings/0x409/product  # This line sets the overall gadget's product name
+
+# Set up configuration
+mkdir configs/c.1
 echo $MAX_POWER_MA > configs/c.1/MaxPower
-mkdir functions/ecm.usb0                                          #  add hid function (will fail if kernel < 3.19, which hid was added in)
-ln -s functions/ecm.usb0 configs/c.1/
+
+# Add mass storage function
 mkdir functions/mass_storage.usb0
 dd if=/dev/zero of=/home/user/usb_image.img bs=1M count=64
 mkfs.vfat /home/user/usb_image.img
 echo /home/user/usb_image.img > functions/mass_storage.usb0/lun.0/file
 ln -s functions/mass_storage.usb0 configs/c.1/
 
-# binding
+# Bind the gadget
 ls /sys/class/udc/ > UDC                                          #  bind gadget to UDC driver (brings gadget online). This will only
                                                                   #  succeed if there are no gadgets already bound to the driver. Do
                                                                   #  lsmod and if there's anything in there like g_*, you'll need to
