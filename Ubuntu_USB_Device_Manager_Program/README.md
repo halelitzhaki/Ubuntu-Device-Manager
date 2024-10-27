@@ -24,7 +24,6 @@ The **USB Device Manager** is a Python application that monitors, manages, and c
   - `scikit-learn`
   - `joblib`
   - `PyGObject`
-  - `python3-tk`
   - `pexpect`
 - `sudo` permissions are required to run the application due to the nature of USB device management.
 
