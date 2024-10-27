@@ -3,18 +3,19 @@ import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 import joblib
 from sklearn.preprocessing import LabelEncoder
+from loguru import logger
 
 MODEL_FILE = 'ml_model/saved_model.pkl'
 LOG_FILE = 'data/usb_device_logs.json'
 
 
-def train_model():
+def train_model() -> None:
     """ Train the model on the logged USB device data. """
     with open(LOG_FILE, 'r') as file:
         logs = json.load(file)
 
     if len(logs) == 0:
-        print("No data to train the model.")
+        logger.warning("No data to train the model.")
         return None
 
     # Extract features and labels, skipping entries without 'decision'
@@ -43,7 +44,7 @@ def train_model():
     # Check the balance of "allow" vs "block"
     allow_count = decisions.count(1)
     block_count = decisions.count(0)
-    print(f"Training data: {allow_count} allow, {block_count} block")
+    logger.info(f"Training data: {allow_count} allow, {block_count} block")
 
     # Encode features and train model as before
     le_vendor = LabelEncoder()
@@ -66,10 +67,10 @@ def train_model():
     joblib.dump(le_product, 'ml_model/le_product.pkl')
     joblib.dump(le_serial, 'ml_model/le_serial.pkl')
 
-    print("Model and encoders trained and saved.")
+    logger.info("Model and encoders trained and saved.")
 
 
-def predict(device_info):
+def predict(device_info: {}) -> '':
     """ Predict whether a device should be allowed or blocked based on past data. """
     try:
         model = joblib.load(MODEL_FILE)
@@ -77,7 +78,7 @@ def predict(device_info):
         le_product = joblib.load('ml_model/le_product.pkl')
         le_serial = joblib.load('ml_model/le_serial.pkl')
     except FileNotFoundError:
-        print("Model or encoders not found.")
+        logger.error("Model or encoders not found.")
         return None
 
     # Load vendor allow counts
@@ -91,26 +92,26 @@ def predict(device_info):
 
     # Automatically allow only if the vendor has been allowed 5 or more times
     if vendor_allow_count.get(vendor_id, 0) >= 5:
-        print(f"Automatically allowing USB device from vendor {vendor_id}")
+        logger.info(f"Automatically allowing USB device from vendor {vendor_id}")
         return 'allow'
 
     # Handle unseen values for LabelEncoders
     try:
         vendor_encoded = le_vendor.transform([device_info['vendor_id']])[0]
     except ValueError:
-        print(f"Vendor ID {device_info['vendor_id']} not recognized by encoder.")
+        logger.warning(f"Vendor ID {device_info['vendor_id']} not recognized by encoder.")
         return None  # Prompt user for decision
 
     try:
         product_encoded = le_product.transform([device_info['product_id']])[0]
     except ValueError:
-        print(f"Product ID {device_info['product_id']} not recognized by encoder.")
+        logger.warning(f"Product ID {device_info['product_id']} not recognized by encoder.")
         return None  # Prompt user for decision
 
     try:
         serial_encoded = le_serial.transform([device_info['serial']])[0]
     except ValueError:
-        print(f"Serial {device_info['serial']} not recognized by encoder.")
+        logger.warning(f"Serial {device_info['serial']} not recognized by encoder.")
         return None  # Prompt user for decision
 
     # Convert device info to features for the model

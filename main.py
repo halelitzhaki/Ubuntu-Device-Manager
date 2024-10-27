@@ -1,5 +1,6 @@
+from loguru import logger
 from core.device_manager import USBDeviceManager
-from core.device_utils import disable_auto_mount
+from utils.auto_mount_handler import disable_auto_mount
 from ml_model.model import train_model
 from gui.get_sudo_password import get_sudo_password_gui  # Import the GUI function
 
@@ -9,10 +10,8 @@ if __name__ == "__main__":
 
     # If no password is provided, exit the program
     if not sudo_password:
-        print("No password provided. Exiting...")
+        logger.error("No password provided. Exiting...")
         exit(1)
-
-    disable_auto_mount(sudo_password)
 
     # Train the model when the program starts
     train_model()

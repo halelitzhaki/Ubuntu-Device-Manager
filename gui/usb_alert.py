@@ -2,8 +2,9 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
+
 class USBAlertDialog(Gtk.Dialog):
-    def __init__(self, device_info):
+    def __init__(self, device_info: {}) -> None:
         super().__init__(title="USB Device Alert", flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT)
 
         # Set dialog properties
@@ -38,11 +39,12 @@ class USBAlertDialog(Gtk.Dialog):
         # Show all widgets in the dialog
         self.show_all()
 
-    def is_auto_allow(self):
+    def is_auto_allow(self) -> bool:
         """ Return whether the checkbox is active. """
         return self.auto_allow_checkbox.get_active()
 
-def show_usb_alert(device_info):
+
+def show_usb_alert(device_info: {}) -> []:
     """ Shows a GTK dialog asking the user whether to allow or block the USB device, with an auto-allow option. """
     dialog = USBAlertDialog(device_info)
 

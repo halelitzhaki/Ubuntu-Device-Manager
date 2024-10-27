@@ -1,10 +1,17 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class USBDevice:
     """ Represents a USB Device with relevant properties. """
-    def __init__(self, vendor_id, product_id, serial, device_node):
-        self.vendor_id = vendor_id
-        self.product_id = product_id
-        self.serial = serial if serial else "Unknown"
-        self.device_node = device_node
+    vendor_id: str
+    product_id: str
+    serial: str
+    device_node: str
 
-    def __repr__(self):
-        return f"USBDevice(vendor_id={self.vendor_id}, product_id={self.product_id}, serial={self.serial}, device_node={self.device_node})"
+    def __post_init__(self):
+        if not self.serial:
+            self.serial = "Unknown"
+
+    def __repr__(self) -> str:
+        return str(self.__dict__)
