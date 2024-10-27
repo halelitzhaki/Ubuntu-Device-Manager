@@ -1,6 +1,5 @@
 from loguru import logger
 from core.device_manager import USBDeviceManager
-from utils.auto_mount_handler import disable_auto_mount
 from ml_model.model import train_model
 from gui.get_sudo_password import get_sudo_password_gui  # Import the GUI function
 

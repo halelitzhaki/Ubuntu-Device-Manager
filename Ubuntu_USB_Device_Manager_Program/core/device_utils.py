@@ -3,8 +3,8 @@ import os
 import json
 import pyudev
 from loguru import logger
-from utils.root_process_launcher import RootProcessLauncher
-from core.usb_device import USBDevice
+from Ubuntu_USB_Device_Manager_Program.utils.root_process_launcher import RootProcessLauncher
+from Ubuntu_USB_Device_Manager_Program.core.usb_device import USBDevice
 
 LOG_FILE = 'data/usb_device_logs.json'
 
