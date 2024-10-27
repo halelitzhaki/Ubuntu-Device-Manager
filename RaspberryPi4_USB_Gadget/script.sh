@@ -5,11 +5,11 @@
 # when the kernel was compiled (it usually is).
 
 # variables and strings
-MANUFACTURER="SanDisk"                                            #  manufacturer attribute
+MANUFACTURER="Kingston Technology"                                            #  manufacturer attribute
 SERIAL="1234567890"                                               #  device serial number
-IDPRODUCT="0x5567"                                                #  hex product ID, issued by USB Group
-IDVENDOR="0x0781"                                                 #  hex vendor ID, assigned by USB Group
-PRODUCT=" Cruzer Blade"                                           #  cleartext product description
+IDPRODUCT="0x1666"                                                #  hex product ID, issued by USB Group
+IDVENDOR="0x0951"                                                 #  hex vendor ID, assigned by USB Group
+PRODUCT=" DataTraveler"                                           #  cleartext product description
 MAX_POWER_MA=120                                                  #  max power this configuration can consume in mA
 
 # Gadget configuration
