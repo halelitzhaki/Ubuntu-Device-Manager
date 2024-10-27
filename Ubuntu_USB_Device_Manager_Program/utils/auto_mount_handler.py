@@ -1,7 +1,7 @@
 import subprocess
 from loguru import logger
-from Ubuntu_USB_Device_Manager_Program.utils.root_process_launcher import RootProcessLauncher
-from Ubuntu_USB_Device_Manager_Program.core.device_utils import update_udev_rules
+from utils.root_process_launcher import RootProcessLauncher
+from core.device_utils import update_udev_rules
 
 
 def disable_auto_mount(root_process_launcher: RootProcessLauncher) -> None:

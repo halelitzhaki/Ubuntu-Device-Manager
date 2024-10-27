@@ -4,12 +4,12 @@ import time
 import json
 from loguru import logger
 
-from Ubuntu_USB_Device_Manager_Program.core.usb_device import USBDevice
-from Ubuntu_USB_Device_Manager_Program.core.device_utils import get_block_device, get_lsblk_device, log_usb_device, update_udev_rules, mount_device, unmount_device
-from Ubuntu_USB_Device_Manager_Program.gui.usb_alert import show_usb_alert
-from Ubuntu_USB_Device_Manager_Program.ml_model.model import predict
-from Ubuntu_USB_Device_Manager_Program.utils.auto_mount_handler import enable_auto_mount, disable_auto_mount
-from Ubuntu_USB_Device_Manager_Program.utils.root_process_launcher import RootProcessLauncher
+from core.usb_device import USBDevice
+from core.device_utils import get_block_device, get_lsblk_device, log_usb_device, update_udev_rules, mount_device, unmount_device
+from gui.usb_alert import show_usb_alert
+from ml_model.model import predict
+from utils.auto_mount_handler import enable_auto_mount, disable_auto_mount
+from utils.root_process_launcher import RootProcessLauncher
 
 LOG_FILE = 'data/usb_device_logs.json'
 
