@@ -8,8 +8,4 @@ This project introduces an intelligent USB Device Monitoring and Management Syst
 1. **Ubuntu USB Device Manager**: A dynamic monitoring and management system that detects, identifies, and controls USB devices on Ubuntu, learning from user input to automate future responses.
 2. **Raspberry Pi USB Gadget**: Configured as a flexible USB gadget capable of simulating various device types, like USB mass-storage or Keyboard.
 
-## Image
-
-Below is an illustration of the system:
-
-![USB Device Monitoring System](DALL·E%202024-10-28%2001.45.16%20-%20A%20friendly%20and%20light%20version%20of%20an%20image%20depicting%20an%20Ubuntu%20USB%20device%20manager%20and%20a%20Raspberry%20Pi%20acting%20as%20a%20USB%20gadget.%20The%20color%20scheme%20should%20be.webp)
+![alt text](https://github.com/halelitzhaki/Halel-USB-Protection/main/USB Protection Image.jpg?raw=true)
