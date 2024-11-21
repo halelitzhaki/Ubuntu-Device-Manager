@@ -9,3 +9,13 @@ This project introduces an intelligent USB Device Monitoring and Management Syst
 2. **Raspberry Pi USB Gadget**: Configured as a flexible USB gadget capable of simulating various device types, like USB mass-storage or Keyboard.
 
 ![USB Protection Image](https://github.com/user-attachments/assets/eae88bf4-7ce1-4d1a-88db-11eb98391e5c)
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Author
+
+Halel Itzhaki
+
+For any questions or suggestions, please feel free to contact me.
