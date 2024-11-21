@@ -12,10 +12,14 @@ This project introduces an intelligent USB Device Monitoring and Management Syst
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+This project was developed as part of an academic final project.
 
 ## Author
 
-Halel Itzhaki
+**Halel Itzhaki**
 
 For any questions or suggestions, please feel free to contact me.
